@@ -6,7 +6,8 @@ public class Assignment {
     private String name;
 
     public Assignment(Course course, String name) {
-
+        setCourse(course);
+        setName(name);
     }
 
     public Course getCourse() {
@@ -14,7 +15,11 @@ public class Assignment {
     }
 
     public void setCourse(Course course) {
+        if (this.course != null) {
+            this.course.removeAssignment(this);
+        }
         this.course = course;
+        course.addAssignment(this);
     }
 
     public String getName() {
