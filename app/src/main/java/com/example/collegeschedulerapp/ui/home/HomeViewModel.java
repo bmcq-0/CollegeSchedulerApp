@@ -1,19 +1,33 @@
 package com.example.collegeschedulerapp.ui.home;
 
+import android.widget.LinearLayout;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.collegeschedulerapp.scheduling.Course;
+
+import java.util.ArrayList;
+
 public class HomeViewModel extends ViewModel {
+    private final MutableLiveData<ArrayList<Course>> courses
+            = new MutableLiveData<>();
 
-    private final MutableLiveData<String> mText;
-
-    public HomeViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment");
+    public HomeViewModel () {
+        courses.setValue(new ArrayList<Course>());
+    }
+    public LiveData<ArrayList<Course>> getText() {
+        return courses;
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public void setText(Course course) {
+        ArrayList<Course> newArr = courses.getValue();
+        if (course != null) {
+            assert newArr != null;
+            newArr.add(course);
+        }
+        courses.setValue(newArr);
     }
+
 }
