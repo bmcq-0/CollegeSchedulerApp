@@ -33,7 +33,7 @@ public class HomeFragment extends Fragment {
     LinearLayout layout;
 
     HomeViewModel homeViewModel;
-    int size = 0;
+    int size;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -62,8 +62,8 @@ public class HomeFragment extends Fragment {
             public void onChanged(ArrayList<Course> courses) {
                 for (int i = 0; i < courses.size(); i++) {
                     addNewTextView(courses.get(i));
+                    size = courses.size();
                 }
-                size = courses.size();
             }
 
         });
@@ -87,6 +87,7 @@ public class HomeFragment extends Fragment {
                 homeViewModel.getText().removeObservers(getViewLifecycleOwner());
                 homeViewModel.setText(course);
                 addNewTextView(course);
+                size++;
                 view.findViewById(R.id.add_class_form).setVisibility(View.INVISIBLE);
                 view.findViewById(R.id.add_button).setVisibility(View.VISIBLE);
             }
@@ -131,22 +132,22 @@ public class HomeFragment extends Fragment {
         horLayout.addView(textView, childParams);
         horLayout.addView(button, childParams);
         horLayout.addView(deleteButton, childParams);
-        DeleteCourse(deleteButton, course);
+        DeleteCourse(deleteButton, course, horLayout);
         homeViewModel.getText().removeObservers(getViewLifecycleOwner());
         layout.addView(horLayout, layoutParams);
 
     }
 
-    private void DeleteCourse(Button button, Course course) {
+    private void DeleteCourse(Button button, Course course, LinearLayout horLayout) {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                layout.removeView(getView().findViewById(course.getId() + 1000));
+                layout.removeView(horLayout);
 
                 homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Course>>() {
                     @Override
                     public void onChanged(ArrayList<Course> courses) {
-                        courses.remove(course.getId());
+                        courses.remove(course);
                     }
                 });
             }
