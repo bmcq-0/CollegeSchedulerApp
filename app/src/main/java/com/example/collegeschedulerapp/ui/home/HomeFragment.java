@@ -1,5 +1,6 @@
 package com.example.collegeschedulerapp.ui.home;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -18,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.collegeschedulerapp.R;
 import com.example.collegeschedulerapp.databinding.FragmentHomeBinding;
 import com.example.collegeschedulerapp.scheduling.Course;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.w3c.dom.Text;
@@ -58,7 +61,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChanged(ArrayList<Course> courses) {
                 for (int i = 0; i < courses.size(); i++) {
-                    addNewButton(courses.get(i));
+                    addNewTextView(courses.get(i));
                 }
                 size = courses.size();
             }
@@ -83,15 +86,19 @@ public class HomeFragment extends Fragment {
                         size);
                 homeViewModel.getText().removeObservers(getViewLifecycleOwner());
                 homeViewModel.setText(course);
-                addNewButton(course);
+                addNewTextView(course);
                 view.findViewById(R.id.add_class_form).setVisibility(View.INVISIBLE);
                 view.findViewById(R.id.add_button).setVisibility(View.VISIBLE);
             }
         });
+
     }
 
-    private void addNewButton(Course course) {
-        Button textView = new Button(getContext());
+    private void addNewTextView(Course course) {
+        LinearLayout horLayout = new LinearLayout(getContext());
+        horLayout.setId(course.getId() + 1000);
+        horLayout.setOrientation(LinearLayout.HORIZONTAL);
+        TextView textView = new TextView(getContext());
         String text = "Course: " + course.getName() + "\n Time: " + course.getTime()
                 + "\n Instructor: " + course.getInstructor();
         textView.setText(text);
@@ -99,14 +106,52 @@ public class HomeFragment extends Fragment {
         textView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
         textView.setId(course.getId());
 
+        Button button = new Button(getContext());
+        String buttonText = "Edit";
+        button.setText(buttonText);
+        button.setTextSize(20.0f);
+
+        Button deleteButton = new Button(getContext());
+        String delete = "Delete";
+        deleteButton.setText(delete);
+        deleteButton.setTextSize(20.0f);
+
+
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
         );
 
-        layout.addView(textView, layoutParams);
+        LinearLayout.LayoutParams childParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        );
+
+
+        horLayout.addView(textView, childParams);
+        horLayout.addView(button, childParams);
+        horLayout.addView(deleteButton, childParams);
+        DeleteCourse(deleteButton, course);
+        homeViewModel.getText().removeObservers(getViewLifecycleOwner());
+        layout.addView(horLayout, layoutParams);
 
     }
+
+    private void DeleteCourse(Button button, Course course) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                layout.removeView(getView().findViewById(course.getId() + 1000));
+
+                homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Course>>() {
+                    @Override
+                    public void onChanged(ArrayList<Course> courses) {
+                        courses.remove(course.getId());
+                    }
+                });
+            }
+    });
+}
 
     @Override
     public void onDestroy() {
