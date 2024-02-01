@@ -133,10 +133,33 @@ public class HomeFragment extends Fragment {
         horLayout.addView(button, childParams);
         horLayout.addView(deleteButton, childParams);
         DeleteCourse(deleteButton, course, horLayout);
+        EditButton(button, course, textView);
         homeViewModel.getText().removeObservers(getViewLifecycleOwner());
         layout.addView(horLayout, layoutParams);
 
     }
+
+    private void EditButton(Button button, Course course, TextView textView) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.editForm.setVisibility(View.VISIBLE);
+                binding.updateButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        course.setName(String.valueOf(binding.editCourse.getText()));
+                        course.setTime(String.valueOf(binding.editTime.getText()));
+                        course.setInstructor(String.valueOf(binding.editInstructor.getText()));
+                        String text = "Course: " + course.getName() + "\n Time: " + course.getTime()
+                                + "\n Instructor: " + course.getInstructor();
+                        textView.setText(text);
+                        binding.editForm.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
+        });
+    }
+
 
     private void DeleteCourse(Button button, Course course, LinearLayout horLayout) {
         button.setOnClickListener(new View.OnClickListener() {
