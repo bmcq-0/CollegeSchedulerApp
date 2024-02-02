@@ -1,29 +1,25 @@
 package com.example.collegeschedulerapp.scheduling;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Assignment {
 
-    private Course course;
+    private String course;
     private String name;
-    private LocalDateTime date;
+    private LocalDate date;
 
-    public Assignment(Course course, String name, LocalDateTime date) {
+    public Assignment(String course, String name, LocalDate date) {
         setCourse(course);
         setName(name);
         setDate(date);
     }
 
-    public Course getCourse() {
+    public String getCourse() {
         return course;
     }
 
-    public void setCourse(Course course) {
-        if (this.course != null) {
-            this.course.removeAssignment(this);
-        }
+    public void setCourse(String course) {
         this.course = course;
-        course.addAssignment(this);
     }
 
     public String getName() {
@@ -34,11 +30,11 @@ public class Assignment {
         this.name = name;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

@@ -49,17 +49,5 @@ public class Course {
         this.instructor = instructor;
     }
 
-    public void addAssignment(Assignment assignment) {
-        if (assignment.getCourse() != this) {
-            throw new IllegalStateException("Assignment does not belong to this course.");
-        }
-        assignments.add(assignment);
-    }
-
-    public void removeAssignment(Assignment assignment) {
-        if (!assignments.remove(assignment)) {
-            throw new IllegalStateException("Assignment is not listed in this course.");
-        }
-    }
 
 }

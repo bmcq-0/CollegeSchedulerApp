@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.LinearLayout;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
@@ -20,24 +21,34 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.collegeschedulerapp.R;
 import com.example.collegeschedulerapp.databinding.FragmentDashboardBinding;
+import com.example.collegeschedulerapp.scheduling.Assignment;
 import com.example.collegeschedulerapp.scheduling.Course;
 import com.example.collegeschedulerapp.ui.home.HomeViewModel;
 
+import org.w3c.dom.Text;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
 
 public class DashboardFragment extends Fragment {
 
     private FragmentDashboardBinding binding;
 
     HomeViewModel homeViewModel;
+    DashboardViewModel dashboardViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        DashboardViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
 
         homeViewModel =
                 new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+
+        dashboardViewModel =
+                new ViewModelProvider(requireActivity()).get(DashboardViewModel.class);
 
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -45,32 +56,117 @@ public class DashboardFragment extends Fragment {
         return root;
     }
 
+    private void sortAssignments() {
+
+        binding.courseList.removeAllViews();
+        dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Assignment>>() {
+            @Override
+            public void onChanged(ArrayList<Assignment> assignments) {
+                   binding.sortButton.setOnClickListener(new View.OnClickListener() {
+                       @Override
+                       public void onClick(View v) {
+                           binding.sortButton.setClickable(false);
+                           binding.courseSort.setClickable(true);
+                           assignments.sort(new Comparator<Assignment>() {
+                               @Override
+                               public int compare(Assignment o1, Assignment o2) {
+                                   if (o1.getDate().isBefore(o2.getDate())) {
+                                       return -1;
+                                   } else if (o1.getDate().isAfter(o2.getDate())) {
+                                       return 1;
+                                   } else {
+                                       return 0;
+                                   }
+                               }
+                           });
+                           binding.courseList.removeAllViews();
+                           for (int i = 0; i < assignments.size(); i++) {
+                               addAssignment(assignments.get(i));
+                           }
+                       }
+                   });
+
+                   binding.courseSort.setOnClickListener(new View.OnClickListener() {
+                       @Override
+                       public void onClick(View v) {
+                           binding.sortButton.setClickable(true);
+                           binding.courseSort.setClickable(false);
+                           ArrayList<Assignment> arr = new ArrayList<>();
+
+                           for (int i = 0; i < assignments.size(); i++) {
+                               if (!arr.contains(assignments.get(i))) {
+                                   arr.add(assignments.get(i));
+                               }
+                               for (int j = i + 1; j < assignments.size(); j++) {
+                                   if (i != j) {
+                                       if (assignments.get(i).getCourse().contentEquals(assignments.get(j).getCourse())) {
+                                           if (!arr.contains(assignments.get(j))) {
+                                               arr.add(assignments.get(j));
+                                           }
+                                       }
+                                   }
+                               }
+                           }
+                           binding.courseList.removeAllViews();
+                           for (int i = 0; i < arr.size(); i++) {
+                               addAssignment(arr.get(i));
+                           }
+                       }
+                   });
+                }
+        });
+    }
+
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        sortAssignments();
+        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Course>>() {
+            @Override
+            public void onChanged(ArrayList<Course> courses) {
+                for (int i = 0; i < courses.size(); i++) {
+                    Button button = new Button(getContext());
+                    button.setText(courses.get(i).getName());
+                    button.setTextSize(20);
+                    button.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String text = "Selected Course:  " + button.getText();
+                            binding.selectedCourse.setText(text);
+                        }
+                    });
+
+                    Button button2 = new Button(getContext());
+                    button2.setText(courses.get(i).getName());
+                    button2.setTextSize(20);
+                    button2.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                    button2.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String text = "Selected Course:  " + button2.getText();
+                            binding.editSelectedCourse.setText(text);
+                        }
+                    });
+
+                    binding.assignmentCourses.addView(button);
+                    binding.editCoursesList.addView(button2);
+                }
+            }
+
+        });
+
+        binding.sortButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.courseList.removeAllViews();
+                sortAssignments();
+            }
+        });
 
         binding.addAssignmentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Course>>() {
-                    @Override
-                    public void onChanged(ArrayList<Course> courses) {
-                        for (int i = 0; i < courses.size(); i++) {
-                            Button button = new Button(getContext());
-                            button.setText(courses.get(i).getName());
-                            button.setTextSize(20);
-                            button.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                            button.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    String text = "Selected Course:  " + button.getText();
-                                    binding.selectedCourse.setText(text);
-                                }
-                            });
-                            binding.assignmentCourses.addView(button);
-                        }
-                    }
 
-                });
                 binding.assignmentForm.setVisibility(View.VISIBLE);
                 binding.addAssignmentButton.setVisibility(View.INVISIBLE);
             }
@@ -80,6 +176,21 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
+                String courseText = String.valueOf(binding.selectedCourse.getText()).substring(17);
+                String titleText = String.valueOf(binding.formTitle.getText());
+                binding.dueDateChoice.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                    @Override
+                    public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                        Calendar c = Calendar.getInstance();
+                        c.set(year, month, dayOfMonth);
+                        binding.dueDateChoice.setDate(c.getTimeInMillis());
+                    }
+                });
+                LocalDate date = LocalDate.ofEpochDay(binding.dueDateChoice.getDate() / (1000 * 86400));
+                Assignment assignment = new Assignment(courseText, titleText, date);
+                dashboardViewModel.getText().removeObservers(getViewLifecycleOwner());
+                dashboardViewModel.setText(assignment);
+                addAssignment(assignment);
 
                 binding.assignmentForm.setVisibility(View.INVISIBLE);
                 binding.addAssignmentButton.setVisibility(View.VISIBLE);
@@ -87,6 +198,95 @@ public class DashboardFragment extends Fragment {
         });
 
 
+    }
+
+    private void addAssignment (Assignment assignment) {
+        LinearLayout layout = new LinearLayout(getContext());
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+
+        TextView textView = new TextView(getContext());
+        textView.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+        textView.setTextSize(20);
+        String text = "Title: " + assignment.getName() + "\n Course: "
+                + assignment.getCourse() + "\n Due Date: " + assignment.getDate();
+        textView.setText(text);
+
+        Button edit = new Button(getContext());
+        edit.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        edit.setTextSize(20);
+        String editText = "Edit";
+        edit.setText(editText);
+
+        Button delete = new Button(getContext());
+        delete.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        delete.setTextSize(20);
+        String deleteText = "Delete";
+        delete.setText(deleteText);
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        );
+
+        LinearLayout.LayoutParams childParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        );
+
+        layout.addView(textView, childParams);
+        layout.addView(edit, childParams);
+        layout.addView(delete, childParams);
+        editButton(edit, assignment, textView);
+        deleteButton(delete, assignment, layout);
+
+        binding.courseList.addView(layout, layoutParams);
+
+    }
+
+    private void deleteButton(Button button, Assignment assignment, LinearLayout layout) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.courseList.removeView(layout);
+
+                dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Assignment>>() {
+                    @Override
+                    public void onChanged(ArrayList<Assignment> assignments) {
+                        assignments.remove(assignment);
+                    }
+                });
+            }
+        });
+    }
+
+    private void editButton(Button button, Assignment assignment, TextView textView) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.editAssignment.setVisibility(View.VISIBLE);
+                binding.editAddAssignment.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        assignment.setName(String.valueOf(binding.editTitle.getText()));
+                        binding.editDueDate.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                            @Override
+                            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                                Calendar c = Calendar.getInstance();
+                                c.set(year, month, dayOfMonth);
+                                binding.editDueDate.setDate(c.getTimeInMillis());
+                            }
+                        });
+                        LocalDate date = LocalDate.ofEpochDay(binding.editDueDate.getDate() / (1000 * 86400));
+                        assignment.setDate(date);
+                        assignment.setCourse(String.valueOf(binding.editSelectedCourse.getText()).substring(17));
+                        String text = "Title: " + assignment.getName() + "\n Course: "
+                                + assignment.getCourse() + "\n Due Date: " + assignment.getDate();
+                        textView.setText(text);
+                        binding.editAssignment.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
+        });
     }
 
     @Override

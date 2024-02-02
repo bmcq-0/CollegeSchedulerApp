@@ -4,16 +4,29 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.collegeschedulerapp.scheduling.Assignment;
+import com.example.collegeschedulerapp.scheduling.Course;
+
+import java.util.ArrayList;
+
 public class DashboardViewModel extends ViewModel {
 
-    private final MutableLiveData<String> mText;
+    private final MutableLiveData<ArrayList<Assignment>> assignments
+            = new MutableLiveData<>();
 
-    public DashboardViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is dashboard fragment");
+    public DashboardViewModel () {
+        assignments.setValue(new ArrayList<Assignment>());
+    }
+    public LiveData<ArrayList<Assignment>> getText() {
+        return assignments;
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public void setText(Assignment assignment) {
+        ArrayList<Assignment> newArr = assignments.getValue();
+        if (assignment != null) {
+            assert newArr != null;
+            newArr.add(assignment);
+        }
+        assignments.setValue(newArr);
     }
 }

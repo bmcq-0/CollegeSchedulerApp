@@ -9,8 +9,9 @@
 
     <ScrollView
         android:id="@+id/list_container"
-        android:layout_width="406dp"
-        android:layout_height="576dp"
+        android:layout_width="412dp"
+        android:layout_height="460dp"
+        android:layout_marginTop="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -24,31 +25,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" />
     </ScrollView>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_assignment_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="480dp"
-        android:layout_marginEnd="50dp"
-        android:clickable="true"
-        android:scaleX="1.5"
-        android:scaleY="1.5"
-        android:src="@android:drawable/ic_input_add"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ToggleButton
-        android:id="@+id/toggleButton2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="30dp"
-        android:text="ToggleButton"
-        android:textOff="Course"
-        android:textOn="Due Date"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
         android:id="@+id/assignment_form"
@@ -75,25 +51,29 @@
                     android:layout_height="wrap_content"
                     android:hint="Title"
                     android:inputType="text|textPersonName|textCapWords|textImeMultiLine" />
+
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:background="#EDE4E4"
+                android:text="Due Date:"
+                android:textAlignment="viewStart"
+                android:textSize="20dp"
+                android:textStyle="bold" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/form_duedate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Due Date"
-                    android:inputType="datetime|date" />
-
-            </com.google.android.material.textfield.TextInputLayout>
+            <CalendarView
+                android:id="@+id/due_date_choice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white" />
 
             <TextView
                 android:id="@+id/selected_course"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="#C6C2C2"
                 android:fontFamily="sans-serif-black"
                 android:paddingVertical="15dp"
                 android:text="Selected Course:"
@@ -122,9 +102,9 @@
 
     <ScrollView
         android:id="@+id/edit_assignment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="200dp"
+        android:layout_width="404dp"
+        android:layout_height="479dp"
+        android:layout_marginBottom="210dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -149,17 +129,42 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FBFBFB"
+                android:text="Edit Due Date:"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <CalendarView
+                android:id="@+id/edit_due_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/edit_selected_course"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#D3CBCB"
+                android:paddingVertical="20dp"
+                android:text="Selected:  "
+                android:textSize="20dp"
+                android:textStyle="bold"
+                tools:text="Selected:  " />
+
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edit_due_date"
+                <LinearLayout
+                    android:id="@+id/edit_courses_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Due Date"
-                    android:inputType="datetime|date" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:orientation="vertical"></LinearLayout>
+            </ScrollView>
 
             <Button
                 android:id="@+id/edit_add_assignment"
@@ -169,5 +174,34 @@
                 android:textStyle="bold" />
         </LinearLayout>
     </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_assignment_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="480dp"
+        android:layout_marginEnd="50dp"
+        android:clickable="true"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        android:src="@android:drawable/ic_input_add"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/sort_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="290dp"
+        android:text="DUE DATE"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/course_sort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="180dp"
+        android:text="COURSE"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,12 +1,12 @@
 package com.example.collegeschedulerapp.scheduling;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Exam extends Assignment {
 
     private String location;
 
-    public Exam(Course course, String name, LocalDateTime date, String location) {
+    public Exam(String course, String name, LocalDate date, String location) {
         super(course, name, date);
         setLocation(location);
     }
