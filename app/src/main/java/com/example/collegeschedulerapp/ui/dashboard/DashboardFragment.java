@@ -1,5 +1,7 @@
 package com.example.collegeschedulerapp.ui.dashboard;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -40,6 +42,7 @@ public class DashboardFragment extends Fragment {
 
     HomeViewModel homeViewModel;
     DashboardViewModel dashboardViewModel;
+    int size;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -59,9 +62,14 @@ public class DashboardFragment extends Fragment {
     private void sortAssignments() {
 
         binding.courseList.removeAllViews();
+
         dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Assignment>>() {
             @Override
             public void onChanged(ArrayList<Assignment> assignments) {
+                binding.courseList.removeAllViews();
+                for (int i = 0; i < assignments.size(); i++) {
+                    addAssignment(assignments.get(i));
+                }
                    binding.sortButton.setOnClickListener(new View.OnClickListener() {
                        @Override
                        public void onClick(View v) {
@@ -119,10 +127,12 @@ public class DashboardFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         sortAssignments();
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Course>>() {
             @Override
             public void onChanged(ArrayList<Course> courses) {
+                size = courses.size();
                 for (int i = 0; i < courses.size(); i++) {
                     Button button = new Button(getContext());
                     button.setText(courses.get(i).getName());
@@ -163,14 +173,16 @@ public class DashboardFragment extends Fragment {
             }
         });
 
-        binding.addAssignmentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            binding.addAssignmentButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (size != 0) {
+                        binding.assignmentForm.setVisibility(View.VISIBLE);
+                        binding.addAssignmentButton.setVisibility(View.INVISIBLE);
+                    }
+                }
+            });
 
-                binding.assignmentForm.setVisibility(View.VISIBLE);
-                binding.addAssignmentButton.setVisibility(View.INVISIBLE);
-            }
-        });
 
         binding.addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -247,15 +259,30 @@ public class DashboardFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                binding.courseList.removeView(layout);
 
-                dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Assignment>>() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setMessage("Do you want to delete this assignment?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onChanged(ArrayList<Assignment> assignments) {
-                        assignments.remove(assignment);
+                    public void onClick(DialogInterface dialog, int which) {
+                        binding.courseList.removeView(layout);
+
+                        dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Assignment>>() {
+                            @Override
+                            public void onChanged(ArrayList<Assignment> assignments) {
+                                assignments.remove(assignment);
+                            }
+                        });
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
                     }
                 });
-            }
+                AlertDialog alr = builder.create();
+                alr.show();
+        }
         });
     }
 
@@ -264,25 +291,43 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 binding.editAssignment.setVisibility(View.VISIBLE);
+                binding.editDueDate.setDate(binding.dueDateChoice.getDate());
+                binding.editTitle.setText(binding.formTitle.getText());
+                binding.editSelectedCourse.setText(binding.selectedCourse.getText());
+
                 binding.editAddAssignment.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        assignment.setName(String.valueOf(binding.editTitle.getText()));
-                        binding.editDueDate.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setMessage("Confirm Edits?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                                Calendar c = Calendar.getInstance();
-                                c.set(year, month, dayOfMonth);
-                                binding.editDueDate.setDate(c.getTimeInMillis());
+                            public void onClick(DialogInterface dialog, int which) {
+                                assignment.setName(String.valueOf(binding.editTitle.getText()));
+                                binding.editDueDate.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                                    @Override
+                                    public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                                        Calendar c = Calendar.getInstance();
+                                        c.set(year, month, dayOfMonth);
+                                        binding.editDueDate.setDate(c.getTimeInMillis());
+                                    }
+                                });
+                                LocalDate date = LocalDate.ofEpochDay(binding.editDueDate.getDate() / (1000 * 86400));
+                                assignment.setDate(date);
+                                assignment.setCourse(String.valueOf(binding.editSelectedCourse.getText()).substring(17));
+                                String text = "Title: " + assignment.getName() + "\n Course: "
+                                        + assignment.getCourse() + "\n Due Date: " + assignment.getDate();
+                                textView.setText(text);
+                                binding.editAssignment.setVisibility(View.INVISIBLE);
+                            }
+                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
                             }
                         });
-                        LocalDate date = LocalDate.ofEpochDay(binding.editDueDate.getDate() / (1000 * 86400));
-                        assignment.setDate(date);
-                        assignment.setCourse(String.valueOf(binding.editSelectedCourse.getText()).substring(17));
-                        String text = "Title: " + assignment.getName() + "\n Course: "
-                                + assignment.getCourse() + "\n Due Date: " + assignment.getDate();
-                        textView.setText(text);
-                        binding.editAssignment.setVisibility(View.INVISIBLE);
+                        AlertDialog alr = builder.create();
+                        alr.show();
+
                     }
                 });
             }

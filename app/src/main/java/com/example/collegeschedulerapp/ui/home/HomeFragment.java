@@ -1,18 +1,19 @@
 package com.example.collegeschedulerapp.ui.home;
 
-import android.graphics.Color;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -20,7 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.collegeschedulerapp.R;
 import com.example.collegeschedulerapp.databinding.FragmentHomeBinding;
 import com.example.collegeschedulerapp.scheduling.Course;
-import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.resources.TextAppearance;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.w3c.dom.Text;
@@ -147,13 +148,27 @@ public class HomeFragment extends Fragment {
                 binding.updateButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        course.setName(String.valueOf(binding.editCourse.getText()));
-                        course.setTime(String.valueOf(binding.editTime.getText()));
-                        course.setInstructor(String.valueOf(binding.editInstructor.getText()));
-                        String text = "Course: " + course.getName() + "\n Time: " + course.getTime()
-                                + "\n Instructor: " + course.getInstructor();
-                        textView.setText(text);
-                        binding.editForm.setVisibility(View.INVISIBLE);
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setMessage("Confirm Edits?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                course.setName(String.valueOf(binding.editCourse.getText()));
+                                course.setTime(String.valueOf(binding.editTime.getText()));
+                                course.setInstructor(String.valueOf(binding.editInstructor.getText()));
+                                String text = "Course: " + course.getName() + "\n Time: " + course.getTime()
+                                        + "\n Instructor: " + course.getInstructor();
+                                textView.setText(text);
+                                binding.editForm.setVisibility(View.INVISIBLE);
+                            }
+                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        AlertDialog delete = builder.create();
+                        delete.show();
                     }
                 });
             }
@@ -165,14 +180,28 @@ public class HomeFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                layout.removeView(horLayout);
-
-                homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Course>>() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setMessage("Do you want to delete this Course?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onChanged(ArrayList<Course> courses) {
-                        courses.remove(course);
+                    public void onClick(DialogInterface dialog, int which) {
+                        layout.removeView(horLayout);
+
+                        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Course>>() {
+                            @Override
+                            public void onChanged(ArrayList<Course> courses) {
+                                courses.remove(course);
+                            }
+                        });
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
                     }
                 });
+
+                AlertDialog delete = builder.create();
+                delete.show();
             }
     });
 }

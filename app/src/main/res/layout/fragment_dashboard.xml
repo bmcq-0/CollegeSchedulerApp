@@ -150,7 +150,7 @@
                 android:layout_height="wrap_content"
                 android:background="#D3CBCB"
                 android:paddingVertical="20dp"
-                android:text="Selected:  "
+                android:text="Selected Course:  "
                 android:textSize="20dp"
                 android:textStyle="bold"
                 tools:text="Selected:  " />
@@ -186,7 +186,8 @@
         android:scaleY="1.5"
         android:src="@android:drawable/ic_input_add"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:maxImageSize="30dp" />
 
     <Button
         android:id="@+id/sort_button"
