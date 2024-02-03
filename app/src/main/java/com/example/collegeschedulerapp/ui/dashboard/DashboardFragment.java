@@ -13,6 +13,7 @@ import android.widget.CalendarView;
 import android.widget.LinearLayout;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -179,6 +180,15 @@ public class DashboardFragment extends Fragment {
                     if (size != 0) {
                         binding.assignmentForm.setVisibility(View.VISIBLE);
                         binding.addAssignmentButton.setVisibility(View.INVISIBLE);
+
+                        binding.dueDateChoice.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                            @Override
+                            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                                Calendar c = Calendar.getInstance();
+                                c.set(year, month, dayOfMonth);
+                                binding.dueDateChoice.setDate(c.getTimeInMillis());
+                            }
+                        });
                     }
                 }
             });
@@ -187,25 +197,22 @@ public class DashboardFragment extends Fragment {
         binding.addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (String.valueOf(binding.selectedCourse.getText()).length() >= 18) {
+                    String courseText = String.valueOf(binding.selectedCourse.getText()).substring(17);
+                    String titleText = String.valueOf(binding.formTitle.getText());
 
-                String courseText = String.valueOf(binding.selectedCourse.getText()).substring(17);
-                String titleText = String.valueOf(binding.formTitle.getText());
-                binding.dueDateChoice.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-                    @Override
-                    public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                        Calendar c = Calendar.getInstance();
-                        c.set(year, month, dayOfMonth);
-                        binding.dueDateChoice.setDate(c.getTimeInMillis());
-                    }
-                });
-                LocalDate date = LocalDate.ofEpochDay(binding.dueDateChoice.getDate() / (1000 * 86400));
-                Assignment assignment = new Assignment(courseText, titleText, date);
-                dashboardViewModel.getText().removeObservers(getViewLifecycleOwner());
-                dashboardViewModel.setText(assignment);
-                addAssignment(assignment);
+                    LocalDate date = LocalDate.ofEpochDay(binding.dueDateChoice.getDate() / (1000 * 86400));
+                    Assignment assignment = new Assignment(courseText, titleText, date);
+                    dashboardViewModel.getText().removeObservers(getViewLifecycleOwner());
+                    dashboardViewModel.setText(assignment);
+                    addAssignment(assignment);
 
-                binding.assignmentForm.setVisibility(View.INVISIBLE);
-                binding.addAssignmentButton.setVisibility(View.VISIBLE);
+                    binding.assignmentForm.setVisibility(View.INVISIBLE);
+                    binding.addAssignmentButton.setVisibility(View.VISIBLE);
+                } else {
+                    Toast toast = Toast.makeText(getContext(), "Select a Couse!", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
             }
         });
 
@@ -295,6 +302,15 @@ public class DashboardFragment extends Fragment {
                 binding.editTitle.setText(binding.formTitle.getText());
                 binding.editSelectedCourse.setText(binding.selectedCourse.getText());
 
+                binding.editDueDate.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                    @Override
+                    public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                        Calendar c = Calendar.getInstance();
+                        c.set(year, month, dayOfMonth);
+                        binding.editDueDate.setDate(c.getTimeInMillis());
+                    }
+                });
+
                 binding.editAddAssignment.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -303,14 +319,7 @@ public class DashboardFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 assignment.setName(String.valueOf(binding.editTitle.getText()));
-                                binding.editDueDate.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-                                    @Override
-                                    public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                                        Calendar c = Calendar.getInstance();
-                                        c.set(year, month, dayOfMonth);
-                                        binding.editDueDate.setDate(c.getTimeInMillis());
-                                    }
-                                });
+
                                 LocalDate date = LocalDate.ofEpochDay(binding.editDueDate.getDate() / (1000 * 86400));
                                 assignment.setDate(date);
                                 assignment.setCourse(String.valueOf(binding.editSelectedCourse.getText()).substring(17));
