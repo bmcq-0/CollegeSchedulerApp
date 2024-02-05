@@ -1,4 +1,4 @@
-package com.example.collegeschedulerapp;
+package com.example.collegeschedulerapp.ui.exams;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -20,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.collegeschedulerapp.databinding.FragmentExamsBinding;
-import com.example.collegeschedulerapp.scheduling.Assignment;
 import com.example.collegeschedulerapp.scheduling.Course;
 import com.example.collegeschedulerapp.scheduling.Exam;
 import com.example.collegeschedulerapp.ui.home.HomeViewModel;

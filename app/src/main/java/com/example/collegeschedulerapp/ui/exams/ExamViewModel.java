@@ -1,4 +1,4 @@
-package com.example.collegeschedulerapp;
+package com.example.collegeschedulerapp.ui.exams;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
