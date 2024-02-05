@@ -20,7 +20,7 @@
         app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
-            android:id="@+id/course_list"
+            android:id="@+id/todo_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
@@ -64,34 +64,10 @@
                 android:layout_height="match_parent">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edit_course"
+                    android:id="@+id/edit_todo_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Course Name"
-                    android:inputType="text|textPersonName|textCapWords|textImeMultiLine" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edit_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Time"
-                    android:inputType="datetime|time" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edit_instructor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Instructor"
+                    android:hint="Task Description"
                     android:inputType="text|textPersonName|textCapWords|textImeMultiLine" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -105,7 +81,7 @@
     </ScrollView>
 
     <ScrollView
-        android:id="@+id/add_class_form"
+        android:id="@+id/add_todo_form"
         android:layout_width="409dp"
         android:layout_height="488dp"
         android:layout_marginStart="1dp"
@@ -126,42 +102,18 @@
                 android:layout_height="match_parent">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/form_course"
+                    android:id="@+id/form_todo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Course Name"
-                    android:inputType="text|textPersonName|textCapWords|textImeMultiLine|textNoSuggestions" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/form_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Time"
-                    android:inputType="datetime|time" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/form_instructor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Instructor"
+                    android:hint="Task Description"
                     android:inputType="text|textPersonName|textCapWords|textImeMultiLine|textNoSuggestions" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
-                android:id="@+id/class_add_button"
+                android:id="@+id/todo_add_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Add Class" />
+                android:text="Add Task" />
 
         </LinearLayout>
     </ScrollView>
