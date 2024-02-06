@@ -270,6 +270,7 @@ public class DashboardFragment extends Fragment {
                                 assignments.remove(assignment);
                             }
                         });
+                        dashboardViewModel.removeAssignment(assignment);
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override

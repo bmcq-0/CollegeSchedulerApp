@@ -37,6 +37,20 @@ public class Database<T> {
     public ArrayList<T> getData() {
         return data;
     }
+    public void removeData(T dataObject) {
+        try {
+            OutputStream fileOutputStream = Files.newOutputStream(databaseFile.toPath());
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            data.remove(dataObject);
+
+            objectOutputStream.writeInt(data.size());
+            for (int i = 0; i < data.size(); i++) {
+                objectOutputStream.writeObject(data.get(i));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @SuppressWarnings("unchecked")
     public void deserialize() {

@@ -60,7 +60,10 @@ public class TodoFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (String.valueOf(binding.formTodo.getText()).length() > 0) {
-                    todoViewModel.addTask(new Task(String.valueOf(binding.formTodo.getText())));
+                    Task task = new Task(String.valueOf(binding.formTodo.getText()));
+                    todoViewModel.getTasks().removeObservers(getViewLifecycleOwner());
+                    todoViewModel.addTask(task);
+                    addNewTask(task);
 
                     binding.addTodoForm.setVisibility(View.INVISIBLE);
                     binding.addButton.setVisibility(View.VISIBLE);
@@ -179,6 +182,8 @@ public class TodoFragment extends Fragment {
                                 exams.remove(task);
                             }
                         });
+
+                        todoViewModel.removeTask(task);
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override

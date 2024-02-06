@@ -27,6 +27,10 @@ public class DashboardViewModel extends ViewModel {
         return assignments;
     }
 
+    public void removeAssignment(Assignment assignment) {
+        database.removeData(assignment);
+    }
+
     public void addAssignment(Assignment assignment) {
         ArrayList<Assignment> assignments = this.assignments.getValue();
 

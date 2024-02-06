@@ -37,6 +37,10 @@ public class ExamViewModel extends ViewModel {
         return exams;
     }
 
+    public void removeExam(Exam exam) {
+        database.removeData(exam);
+    }
+
     public void addExam(Exam exam) {
         ArrayList<Exam> exams = this.exams.getValue();
 

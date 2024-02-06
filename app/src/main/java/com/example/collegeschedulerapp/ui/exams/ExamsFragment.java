@@ -272,6 +272,8 @@ public class ExamsFragment extends Fragment {
                                 exams.remove(exam);
                             }
                         });
+                        examViewModel.removeExam(exam);
+
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override

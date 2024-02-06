@@ -25,6 +25,9 @@ public class TodoViewModel extends ViewModel {
     public LiveData<ArrayList<Task>> getTasks() {
         return tasks;
     }
+    public void removeTask(Task task) {
+        database.removeData(task);
+    }
 
     public void addTask(Task task) {
         ArrayList<Task> tasks = this.tasks.getValue();

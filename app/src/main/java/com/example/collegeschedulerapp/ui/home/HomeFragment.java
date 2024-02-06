@@ -187,6 +187,7 @@ public class HomeFragment extends Fragment {
                                 courses.remove(course);
                             }
                         });
+                        homeViewModel.removeCourse(course);
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override

@@ -39,4 +39,8 @@ public class HomeViewModel extends ViewModel {
         database.serialize();
     }
 
+    public void removeCourse(Course course) {
+        database.removeData(course);
+    }
+
 }
