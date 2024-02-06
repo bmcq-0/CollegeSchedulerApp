@@ -3,15 +3,12 @@ package com.example.collegeschedulerapp.ui.dashboard;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.LinearLayout;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,23 +16,16 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.collegeschedulerapp.R;
 import com.example.collegeschedulerapp.databinding.FragmentDashboardBinding;
 import com.example.collegeschedulerapp.scheduling.Assignment;
 import com.example.collegeschedulerapp.scheduling.Course;
 import com.example.collegeschedulerapp.ui.home.HomeViewModel;
 
-import org.w3c.dom.Text;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
 
 public class DashboardFragment extends Fragment {
 
@@ -48,11 +38,11 @@ public class DashboardFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        homeViewModel =
-                new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        dashboardViewModel = new ViewModelProvider(requireActivity()).get(DashboardViewModel.class);
 
-        dashboardViewModel =
-                new ViewModelProvider(requireActivity()).get(DashboardViewModel.class);
+        homeViewModel.initialize(getContext());
+        dashboardViewModel.initialize(getContext());
 
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -64,7 +54,7 @@ public class DashboardFragment extends Fragment {
 
         binding.courseList.removeAllViews();
 
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Assignment>>() {
+        dashboardViewModel.getAssignments().observe(getViewLifecycleOwner(), new Observer<ArrayList<Assignment>>() {
             @Override
             public void onChanged(ArrayList<Assignment> assignments) {
                 binding.courseList.removeAllViews();
@@ -130,7 +120,7 @@ public class DashboardFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         sortAssignments();
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Course>>() {
+        homeViewModel.getCourses().observe(getViewLifecycleOwner(), new Observer<ArrayList<Course>>() {
             @Override
             public void onChanged(ArrayList<Course> courses) {
                 size = courses.size();
@@ -203,8 +193,8 @@ public class DashboardFragment extends Fragment {
 
                     LocalDate date = LocalDate.ofEpochDay(binding.dueDateChoice.getDate() / (1000 * 86400));
                     Assignment assignment = new Assignment(courseText, titleText, date);
-                    dashboardViewModel.getText().removeObservers(getViewLifecycleOwner());
-                    dashboardViewModel.setText(assignment);
+                    dashboardViewModel.getAssignments().removeObservers(getViewLifecycleOwner());
+                    dashboardViewModel.addAssignment(assignment);
                     addAssignment(assignment);
 
                     binding.assignmentForm.setVisibility(View.INVISIBLE);
@@ -274,7 +264,7 @@ public class DashboardFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         binding.courseList.removeView(layout);
 
-                        dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Assignment>>() {
+                        dashboardViewModel.getAssignments().observe(getViewLifecycleOwner(), new Observer<ArrayList<Assignment>>() {
                             @Override
                             public void onChanged(ArrayList<Assignment> assignments) {
                                 assignments.remove(assignment);

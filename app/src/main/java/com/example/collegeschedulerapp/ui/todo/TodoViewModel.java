@@ -37,4 +37,5 @@ public class TodoViewModel extends ViewModel {
 
         database.serialize();
     }
+
 }

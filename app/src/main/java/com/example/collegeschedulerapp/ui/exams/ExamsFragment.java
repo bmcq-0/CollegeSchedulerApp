@@ -41,8 +41,13 @@ public class ExamsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentExamsBinding.inflate(inflater, container, false);
+
         examViewModel = new ViewModelProvider(requireActivity()).get(ExamViewModel.class);
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+
+        homeViewModel.initialize(getContext());
+        examViewModel.initialize(getContext());
+
         View root = binding.getRoot();
 
         return root;
@@ -51,7 +56,7 @@ public class ExamsFragment extends Fragment {
     }
 
     public void addStoredExams() {
-        examViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Exam>>() {
+        examViewModel.getExams().observe(getViewLifecycleOwner(), new Observer<ArrayList<Exam>>() {
             @Override
             public void onChanged(ArrayList<Exam> exams) {
                 for (int i = 0; i < exams.size(); i++) {
@@ -68,7 +73,7 @@ public class ExamsFragment extends Fragment {
 
         addStoredExams();
 
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Course>>() {
+        homeViewModel.getCourses().observe(getViewLifecycleOwner(), new Observer<ArrayList<Course>>() {
             @Override
             public void onChanged(ArrayList<Course> courses) {
                 size = courses.size();
@@ -137,6 +142,8 @@ public class ExamsFragment extends Fragment {
                     String examRoom = String.valueOf(binding.roomInput.getText());
 
                     Exam exam = new Exam(examCourse, examTitle, examDate, examTime, examLocation, examRoom);
+                    examViewModel.getExams().removeObservers(getViewLifecycleOwner());
+                    examViewModel.addExam(exam);
                     addNewExam(exam);
 
                     binding.examAddForm.setVisibility(View.INVISIBLE);
@@ -259,7 +266,7 @@ public class ExamsFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         binding.examList.removeView(layout);
 
-                        examViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Exam>>() {
+                        examViewModel.getExams().observe(getViewLifecycleOwner(), new Observer<ArrayList<Exam>>() {
                             @Override
                             public void onChanged(ArrayList<Exam> exams) {
                                 exams.remove(exam);

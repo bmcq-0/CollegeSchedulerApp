@@ -3,9 +3,6 @@ package com.example.collegeschedulerapp.ui.home;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.InputFilter;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.collegeschedulerapp.R;
 import com.example.collegeschedulerapp.databinding.FragmentHomeBinding;
 import com.example.collegeschedulerapp.scheduling.Course;
-import com.google.android.material.resources.TextAppearance;
 import com.google.android.material.textfield.TextInputEditText;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -39,8 +33,9 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+
+        homeViewModel.initialize(getContext());
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -58,7 +53,7 @@ public class HomeFragment extends Fragment {
         TextInputEditText formTime = view.findViewById(R.id.form_time);
         TextInputEditText formInstructor = view.findViewById(R.id.form_instructor);
 
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Course>>() {
+        homeViewModel.getCourses().observe(getViewLifecycleOwner(), new Observer<ArrayList<Course>>() {
             @Override
             public void onChanged(ArrayList<Course> courses) {
                 for (int i = 0; i < courses.size(); i++) {
@@ -85,8 +80,8 @@ public class HomeFragment extends Fragment {
                         String.valueOf(formTime.getText()),
                         String.valueOf(formInstructor.getText()),
                         size);
-                homeViewModel.getText().removeObservers(getViewLifecycleOwner());
-                homeViewModel.setText(course);
+                homeViewModel.getCourses().removeObservers(getViewLifecycleOwner());
+                homeViewModel.addCourse(course);
                 addNewTextView(course);
                 size++;
                 view.findViewById(R.id.add_class_form).setVisibility(View.INVISIBLE);
@@ -135,7 +130,7 @@ public class HomeFragment extends Fragment {
         horLayout.addView(deleteButton, childParams);
         DeleteCourse(deleteButton, course, horLayout);
         EditButton(button, course, textView);
-        homeViewModel.getText().removeObservers(getViewLifecycleOwner());
+        homeViewModel.getCourses().removeObservers(getViewLifecycleOwner());
         layout.addView(horLayout, layoutParams);
 
     }
@@ -186,7 +181,7 @@ public class HomeFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         layout.removeView(horLayout);
 
-                        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<Course>>() {
+                        homeViewModel.getCourses().observe(getViewLifecycleOwner(), new Observer<ArrayList<Course>>() {
                             @Override
                             public void onChanged(ArrayList<Course> courses) {
                                 courses.remove(course);
