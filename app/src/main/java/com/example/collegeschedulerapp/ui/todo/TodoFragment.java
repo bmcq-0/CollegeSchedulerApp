@@ -14,20 +14,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.collegeschedulerapp.R;
 import com.example.collegeschedulerapp.databinding.FragmentTodoBinding;
-import com.example.collegeschedulerapp.scheduling.Course;
-import com.example.collegeschedulerapp.scheduling.Exam;
-import com.example.collegeschedulerapp.scheduling.TodoTask;
+import com.example.collegeschedulerapp.scheduling.Task;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class TodoFragment extends Fragment {
 
@@ -42,6 +36,8 @@ public class TodoFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentTodoBinding.inflate(inflater, container, false);
         todoViewModel = new ViewModelProvider(requireActivity()).get(TodoViewModel.class);
+
+        todoViewModel.initialize(getContext());
 
         return binding.getRoot();
     }
@@ -64,7 +60,7 @@ public class TodoFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (String.valueOf(binding.formTodo.getText()).length() > 0) {
-                    todoViewModel.setText(new TodoTask(String.valueOf(binding.formTodo.getText())));
+                    todoViewModel.addTask(new Task(String.valueOf(binding.formTodo.getText())));
 
                     binding.addTodoForm.setVisibility(View.INVISIBLE);
                     binding.addButton.setVisibility(View.VISIBLE);
@@ -77,9 +73,9 @@ public class TodoFragment extends Fragment {
     }
 
     public void addStoredTasks() {
-        todoViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<TodoTask>>() {
+        todoViewModel.getTasks().observe(getViewLifecycleOwner(), new Observer<ArrayList<Task>>() {
             @Override
-            public void onChanged(ArrayList<TodoTask> todo) {
+            public void onChanged(ArrayList<Task> todo) {
                 for (int i = 0; i < todo.size(); i++) {
                     addNewTask(todo.get(i));
                 }
@@ -87,7 +83,7 @@ public class TodoFragment extends Fragment {
         });
     }
 
-    private void addNewTask(TodoTask task) {
+    private void addNewTask(Task task) {
         LinearLayout layout = new LinearLayout(getContext());
         layout.setOrientation(LinearLayout.VERTICAL);
 
@@ -127,7 +123,7 @@ public class TodoFragment extends Fragment {
         binding.todoList.addView(layout, layoutParams);
     }
 
-    private void editButton(Button button, TodoTask task, TextView textView) {
+    private void editButton(Button button, Task task, TextView textView) {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,7 +161,7 @@ public class TodoFragment extends Fragment {
 
     }
 
-    private void deleteButton(Button button, TodoTask task, LinearLayout layout) {
+    private void deleteButton(Button button, Task task, LinearLayout layout) {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -177,9 +173,9 @@ public class TodoFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         binding.todoList.removeView(layout);
 
-                        todoViewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<TodoTask>>() {
+                        todoViewModel.getTasks().observe(getViewLifecycleOwner(), new Observer<ArrayList<Task>>() {
                             @Override
-                            public void onChanged(ArrayList<TodoTask> exams) {
+                            public void onChanged(ArrayList<Task> exams) {
                                 exams.remove(task);
                             }
                         });

@@ -1,31 +1,40 @@
 package com.example.collegeschedulerapp.ui.todo;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.collegeschedulerapp.scheduling.Exam;
-import com.example.collegeschedulerapp.scheduling.TodoTask;
+import com.example.collegeschedulerapp.scheduling.Task;
+import com.example.collegeschedulerapp.storage.Database;
 
 import java.util.ArrayList;
 
 public class TodoViewModel extends ViewModel {
-    private final MutableLiveData<ArrayList<TodoTask>> todo
-            = new MutableLiveData<>();
 
-    public TodoViewModel () {
-        todo.setValue(new ArrayList<TodoTask>());
-    }
-    public LiveData<ArrayList<TodoTask>> getText() {
-        return todo;
+    private Database<Task> database;
+
+    private final MutableLiveData<ArrayList<Task>> tasks = new MutableLiveData<>();
+
+    public void initialize(Context context) {
+        database = new Database<>(context, "tasks");
+        tasks.setValue(database.getData());
     }
 
-    public void setText(TodoTask task) {
-        ArrayList<TodoTask> newArr = todo.getValue();
-        if (task != null) {
-            assert newArr != null;
-            newArr.add(task);
-        }
-        todo.setValue(newArr);
+    public LiveData<ArrayList<Task>> getTasks() {
+        return tasks;
+    }
+
+    public void addTask(Task task) {
+        ArrayList<Task> tasks = this.tasks.getValue();
+
+        assert tasks != null;
+        assert task != null;
+
+        tasks.add(task);
+        this.tasks.setValue(tasks);
+
+        database.serialize();
     }
 }

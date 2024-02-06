@@ -1,10 +1,12 @@
 package com.example.collegeschedulerapp.scheduling;
 
-public class TodoTask {
+import java.io.Serializable;
+
+public class Task implements Serializable {
 
     private String description;
 
-    public TodoTask(String description) {
+    public Task(String description) {
         setDescription(description);
     }
 
@@ -15,4 +17,5 @@ public class TodoTask {
     public void setDescription(String description) {
         this.description = description;
     }
+
 }
