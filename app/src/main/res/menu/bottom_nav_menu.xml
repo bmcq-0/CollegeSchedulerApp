@@ -21,9 +21,5 @@
         android:layout_height="wrap_content"
         android:icon="@android:drawable/checkbox_on_background"
         android:title="@string/title_todo" />
-    <item
-        android:id="@+id/navigation_notifications"
-        android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/title_notifications" />
 
 </menu>

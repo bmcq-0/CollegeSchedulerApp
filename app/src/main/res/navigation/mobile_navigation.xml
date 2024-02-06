@@ -18,11 +18,6 @@
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.example.collegeschedulerapp.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
-    <fragment
         android:id="@+id/navigation_exams"
         android:name="com.example.collegeschedulerapp.ui.exams.ExamsFragment"
         android:label="@string/title_exams"
